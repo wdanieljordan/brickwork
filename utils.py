@@ -9,7 +9,7 @@ from subrepos.brickwork.apis.ace_iot import get_timeseries
 from brickschema import Graph
 
 class RdfParser():
-    """
+    """Helper class for handling RDF responses
 
     """
     def __init__(self, graph):
@@ -36,10 +36,14 @@ class RdfParser():
         return list_friendly
 
 class BrickModel(RdfParser):
-    """
+    """This is the primary class for holding brick data models ("graphs"). The methods are essentially convenience functions for querying brick graphs based on common use cases. In turn, makes heavy use of the Entity class.
 
     """
     def __init__(self, filepath):
+        '''
+
+        :param filepath: (str) filepath pointing to brick data model (.ttl). See the Brickschema documentation
+        '''
         self.graph = Graph(load_brick=True)
         self.graph.load_file(filepath)
         self.systems = {}
@@ -47,7 +51,7 @@ class BrickModel(RdfParser):
     def get_entities(self, name=None, brick_class=None):
         """Get a list of entities filtered by name, by class, or by both.
 
-        :param brick_class:
+        :param brick_class: (str) must correspond to a brick class as defined by https://brickschema.org/ontology/1.3/#Classes (case-sensitive)
         :return: a list of instances of the Entity class
         """
         predicate = '?brick_class'
@@ -81,9 +85,9 @@ class BrickModel(RdfParser):
         return entity_list
 
     def get_entities_of_system(self, system_name):
-        """
+        """Get all the entities "within" a system, as determined by the graph.
 
-        :param system_name:
+        :param system_name: (str) must correspond to an entity (typically a brick:System) that either has parts, has input substance(s), or has output substance(s) as defined within the graph loaded in BrickModel instantiation.
         :return:
         """
         qry = f"""SELECT ?obj ?brick_class WHERE {{
@@ -97,7 +101,7 @@ class BrickModel(RdfParser):
         return entities
 
     def get_entity_brick_class(self, name):
-        """
+        """ToDo: used???
 
         :param uri:
         :return:
